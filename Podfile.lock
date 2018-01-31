@@ -1,0 +1,44 @@
+PODS:
+  - AMScrollingNavbar (4.2.1)
+  - CountryPickerSwift (1.4.5)
+  - Crashlytics (3.9.3):
+    - Fabric (~> 1.7.2)
+  - Fabric (1.7.2)
+  - Instabug (7.8.1):
+    - Instabug/Instabug (= 7.8.1)
+    - Instabug/InstabugCore (= 7.8.1)
+  - Instabug/Instabug (7.8.1):
+    - Instabug/InstabugCore
+  - Instabug/InstabugCore (7.8.1)
+  - IQKeyboardManagerSwift (5.0.7)
+  - NSDate-Time-Ago (1.0.1)
+  - PhoneNumberKit (2.1.0):
+    - PhoneNumberKit/PhoneNumberKitCore (= 2.1.0)
+    - PhoneNumberKit/UIKit (= 2.1.0)
+  - PhoneNumberKit/PhoneNumberKitCore (2.1.0)
+  - PhoneNumberKit/UIKit (2.1.0):
+    - PhoneNumberKit/PhoneNumberKitCore
+
+DEPENDENCIES:
+  - AMScrollingNavbar
+  - CountryPickerSwift
+  - Crashlytics
+  - Fabric
+  - Instabug
+  - IQKeyboardManagerSwift
+  - NSDate-Time-Ago
+  - PhoneNumberKit
+
+SPEC CHECKSUMS:
+  AMScrollingNavbar: 84d998ea885809d61bbc886053115ec3f2a64f41
+  CountryPickerSwift: be2cf0dc41887d8b16ea65ae263a70adb0cc953a
+  Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
+  Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
+  Instabug: 6ae3003e5ae068a265689ee19707d0c48d7a5abd
+  IQKeyboardManagerSwift: 30fb3a61de1af53a95e02b80fb54ed0a19d5ede5
+  NSDate-Time-Ago: e9de167d0659ebe465c273e833e7b582f061fc41
+  PhoneNumberKit: 62003f40ff75315fd3738286558bc365365ac222
+
+PODFILE CHECKSUM: a52e819ff74f4db5827b7a03ba3676cf12aec6f6
+
+COCOAPODS: 1.4.0
