@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import IQAudioRecorderController
 
 class APGroupChatViewController: BaseChatViewController {
 
@@ -15,6 +16,7 @@ class APGroupChatViewController: BaseChatViewController {
     var infoView: APChatHeaderView?
     
     var isFirstAppear = true
+    var isPresent = false
     
     var messageSender: DemoChatMessageSender!
     let messagesSelector = BaseMessagesSelector()
@@ -95,7 +97,9 @@ class APGroupChatViewController: BaseChatViewController {
 
     // MARK: - IBAction
     @IBAction func backButtonPressed(_ sender: Any?) {
-        if let navigationController = self.navigationController {
+        if isPresent == true {
+            self.dismiss(animated: true, completion: nil)
+        } else if let navigationController = self.navigationController {
             navigationController.popViewController(animated: true)
         } else {
             self.dismiss(animated: true, completion: nil)
@@ -115,13 +119,16 @@ class APGroupChatViewController: BaseChatViewController {
         let chatInputView = ChatInputBar.loadNib()
         chatInputView.delegate = self
         var appearance = ChatInputBarAppearance()
-        appearance.tabBarAppearance.interItemSpacing = 100
+        let inputItems = self.createChatInputItems()
+        appearance.tabBarAppearance.interItemSpacing = (UIScreen.main.bounds.width - 64 - 94) / CGFloat(inputItems.count - 1)
+        //appearance.tabBarAppearance.interItemSpacing = 10
+        appearance.tabBarAppearance.contentInsets = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
         //appearance.sendButtonAppearance.title = NSLocalizedString("Send", comment: "")
         appearance.sendButtonAppearance.font = UIFont(name: "Poppins-SemiBold", size: 14)!
         appearance.textInputAppearance.font = UIFont(name: "Poppins-Regular", size: 14)!
-        appearance.textInputAppearance.placeholderText = NSLocalizedString("  Type a message here", comment: "")
+        appearance.textInputAppearance.placeholderText = NSLocalizedString("Type a message here", comment: "")
         appearance.textInputAppearance.placeholderFont = UIFont(name: "Poppins-Regular", size: 14)!
-        self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputView, chatInputItems: self.createChatInputItems(), chatInputBarAppearance: appearance)
+        self.chatInputPresenter = BasicChatInputBarPresenter(chatInputBar: chatInputView, chatInputItems: inputItems, chatInputBarAppearance: appearance)
         chatInputView.maxCharactersCount = 1000
         return chatInputView
     }
@@ -151,8 +158,9 @@ class APGroupChatViewController: BaseChatViewController {
     func createChatInputItems() -> [ChatInputItemProtocol] {
         var items = [ChatInputItemProtocol]()
         items.append(self.createEmojiInputItem())
-        items.append(self.createTextInputItem())
+        items.append(self.createGifInputItem())
         items.append(self.createPhotoInputItem())
+        items.append(self.createFlagInputItem())
         return items
     }
     
@@ -182,8 +190,16 @@ class APGroupChatViewController: BaseChatViewController {
         return item
     }
     
-    private func createFlagInputItem() -> PhotosChatInputItem {
-        let item = PhotosChatInputItem(presentingController: self)
+    private func createFlagInputItem() -> FlagsChatInputItem {
+        let item = FlagsChatInputItem(presentingController: self)
+        item.photoInputHandler = { [weak self] image in
+            self?.dataSource.addPhotoMessage(image)
+        }
+        return item
+    }
+    
+    private func createGifInputItem() -> GifsChatInputItem {
+        let item = GifsChatInputItem(presentingController: self)
         item.photoInputHandler = { [weak self] image in
             self?.dataSource.addPhotoMessage(image)
         }
@@ -223,6 +239,18 @@ extension APGroupChatViewController: ChatInputBarDelegate {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
+    func inputBarMicButtonPressed(_ inputBar: ChatInputBar) {
+        let controller = IQAudioRecorderViewController()
+        controller.delegate = self
+        controller.title = "Recorder"
+        controller.maximumRecordDuration = 100
+        controller.allowCropping = true
+//        controller.barStyle = UIBarStyleDefault;
+//        controller.normalTintColor = [UIColor magentaColor];
+//        controller.highlightedTintColor = [UIColor orangeColor];
+        presentBlurredAudioRecorderViewControllerAnimated(controller)
+    }
+    
     func inputBar(_ inputBar: ChatInputBar, shouldFocusOnItem item: ChatInputItemProtocol) -> Bool {
         return true
     }
@@ -237,5 +265,15 @@ extension APGroupChatViewController: ChatInputBarDelegate {
 
     func inputBarDidHidePlaceholder(_ inputBar: ChatInputBar) {
         
+    }
+}
+
+extension APGroupChatViewController: IQAudioRecorderViewControllerDelegate {
+    func audioRecorderController(_ controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func audioRecorderControllerDidCancel(_ controller: IQAudioRecorderViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }

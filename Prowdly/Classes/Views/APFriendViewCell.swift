@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol APFriendViewCellDelegate {
+    func didSelectFriend(friend: APUser, selection: Bool)
+}
+
 class APFriendViewCell: APTableViewCell {
 
     @IBOutlet weak var thumbImageView: UIImageView!
@@ -16,7 +20,17 @@ class APFriendViewCell: APTableViewCell {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var selectionButton: UIButton?
     
-    var isSelection = false
+    var delegate: APFriendViewCellDelegate? = nil
+    var isSelection = false {
+        didSet {
+            if isSelection {
+                selectionButton?.setImage(UIImage(named: "selected"), for: .normal)
+            } else {
+                selectionButton?.setImage(UIImage(named: "deselected"), for: .normal)
+            }
+        }
+    }
+    var user = APUser()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,10 +46,6 @@ class APFriendViewCell: APTableViewCell {
     // MARK: - IBAction
     @IBAction func selectionButtonPressed(_ sender: UIButton?) {
         isSelection = !isSelection
-        if isSelection {
-            selectionButton?.setImage(UIImage(named: "selected"), for: .normal)
-        } else {
-            selectionButton?.setImage(UIImage(named: "deselected"), for: .normal)
-        }
+        delegate?.didSelectFriend(friend: user, selection: isSelection)
     }
 }

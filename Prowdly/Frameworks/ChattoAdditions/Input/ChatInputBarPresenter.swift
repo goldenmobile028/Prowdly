@@ -29,6 +29,7 @@ protocol ChatInputBarPresenter: class {
     func onDidBeginEditing()
     func onDidEndEditing()
     func onSendButtonPressed()
+    func onMicButtonPressed()
     func onDidReceiveFocusOnItem(_ item: ChatInputItemProtocol)
 }
 
@@ -151,6 +152,11 @@ extension BasicChatInputBarPresenter {
             keyboardItem.handleInput(self.chatInputBar.inputText as AnyObject)
         }
         self.chatInputBar.inputText = ""
+        self.chatInputBar.showsMicButton = true
+    }
+    
+    func onMicButtonPressed() {
+        
     }
 
     func onDidReceiveFocusOnItem(_ item: ChatInputItemProtocol) {

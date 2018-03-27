@@ -1,5 +1,15 @@
 PODS:
+  - Alamofire (4.6.0)
   - AMScrollingNavbar (4.2.1)
+  - CocoaAsyncSocket (7.6.2)
+  - CocoaLumberjack (3.4.1):
+    - CocoaLumberjack/Default (= 3.4.1)
+    - CocoaLumberjack/Extensions (= 3.4.1)
+  - CocoaLumberjack/Default (3.4.1)
+  - CocoaLumberjack/Extensions (3.4.1):
+    - CocoaLumberjack/Default
+  - CocoaLumberjack/Swift (3.4.1):
+    - CocoaLumberjack/Default
   - CountryPickerSwift (1.4.5)
   - Crashlytics (3.9.3):
     - Fabric (~> 1.7.2)
@@ -10,35 +20,80 @@ PODS:
   - Instabug/Instabug (7.8.1):
     - Instabug/InstabugCore
   - Instabug/InstabugCore (7.8.1)
+  - IQAudioRecorderController (1.2.2):
+    - SCSiriWaveformView
   - IQKeyboardManagerSwift (5.0.7)
-  - NSDate-Time-Ago (1.0.1)
+  - KissXML (5.2.2)
+  - libidn (1.33)
   - PhoneNumberKit (2.1.0):
     - PhoneNumberKit/PhoneNumberKitCore (= 2.1.0)
     - PhoneNumberKit/UIKit (= 2.1.0)
   - PhoneNumberKit/PhoneNumberKitCore (2.1.0)
   - PhoneNumberKit/UIKit (2.1.0):
     - PhoneNumberKit/PhoneNumberKitCore
+  - SCSiriWaveformView (1.1.1)
+  - SDWebImage (4.3.2):
+    - SDWebImage/Core (= 4.3.2)
+  - SDWebImage/Core (4.3.2)
+  - SVProgressHUD (2.2.5)
+  - SwiftyGif (4.1.0)
+  - Toast-Swift (3.0.1)
+  - XMPPFramework/default (4.0):
+    - CocoaAsyncSocket (~> 7.6.0)
+    - CocoaLumberjack
+    - KissXML (~> 5.2.0)
+    - libidn (~> 1.33.0)
+  - XMPPFramework/Swift (4.0):
+    - CocoaLumberjack/Swift
+    - XMPPFramework/default
 
 DEPENDENCIES:
+  - Alamofire
   - AMScrollingNavbar
   - CountryPickerSwift
   - Crashlytics
   - Fabric
   - Instabug
+  - IQAudioRecorderController
   - IQKeyboardManagerSwift
-  - NSDate-Time-Ago
   - PhoneNumberKit
+  - SDWebImage
+  - SVProgressHUD
+  - SwiftyGif
+  - Toast-Swift
+  - XMPPFramework/Swift (from `https://github.com/robbiehanson/XMPPFramework.git`, branch `master`)
+
+EXTERNAL SOURCES:
+  XMPPFramework:
+    :branch: master
+    :git: https://github.com/robbiehanson/XMPPFramework.git
+
+CHECKOUT OPTIONS:
+  XMPPFramework:
+    :commit: 510b6f80cb683541b22de4854bc040f480ff83bd
+    :git: https://github.com/robbiehanson/XMPPFramework.git
 
 SPEC CHECKSUMS:
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
   AMScrollingNavbar: 84d998ea885809d61bbc886053115ec3f2a64f41
+  CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
+  CocoaLumberjack: 2e258a064cacc8eb9a2aca318e24d02a0a7fd56d
   CountryPickerSwift: be2cf0dc41887d8b16ea65ae263a70adb0cc953a
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
   Instabug: 6ae3003e5ae068a265689ee19707d0c48d7a5abd
+  IQAudioRecorderController: 98092734d2f7182d629eaa54b6bbcdb4283bfce2
   IQKeyboardManagerSwift: 30fb3a61de1af53a95e02b80fb54ed0a19d5ede5
-  NSDate-Time-Ago: e9de167d0659ebe465c273e833e7b582f061fc41
+  KissXML: 4418f32138aec43797891845d682b00fc8cd4677
+  libidn: 90fc1a62b60288dcf543f13f4ebca913f17d829f
   PhoneNumberKit: 62003f40ff75315fd3738286558bc365365ac222
+  SCSiriWaveformView: 15b9dd6f94c7536e2032b34a35c6ff74d38c7411
+  SDWebImage: 29bd3c0bc1f01e5eb59720847c64ad4c4ca1af5d
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftyGif: d36c6dfb52e2ca1e48fe349d225f50ec4123ec85
+  Toast-Swift: ba0b01b095aada709d915f9beb1d38184a2721c3
+  XMPPFramework: 967df10e4dc4ba4ca5e04505fd2b2d2fd562d917
 
-PODFILE CHECKSUM: a52e819ff74f4db5827b7a03ba3676cf12aec6f6
+PODFILE CHECKSUM: b9ad3678b0717670ed0ee8f756a1175d85d6ad90
 
 COCOAPODS: 1.4.0

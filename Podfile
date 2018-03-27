@@ -6,7 +6,6 @@ target 'Prowdly' do
   use_frameworks!
 
   # Pods for Prowdly
-  pod 'NSDate-Time-Ago'
   pod 'AMScrollingNavbar'
   pod 'CountryPickerSwift'
   pod 'IQKeyboardManagerSwift'
@@ -14,6 +13,13 @@ target 'Prowdly' do
   pod 'Fabric'
   pod 'Crashlytics'
   pod 'Instabug'
+  pod 'IQAudioRecorderController'
+  pod 'Toast-Swift'
+  pod 'SwiftyGif'
+  pod 'SVProgressHUD'
+  pod 'Alamofire'
+  pod 'SDWebImage'
+  pod 'XMPPFramework/Swift', :git => 'https://github.com/robbiehanson/XMPPFramework.git', :branch => 'master'
 
   target 'ProwdlyTests' do
     inherit! :search_paths

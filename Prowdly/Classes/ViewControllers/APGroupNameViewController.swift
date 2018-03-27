@@ -41,6 +41,14 @@ class APGroupNameViewController: APBaseViewController, UITextFieldDelegate {
         if segue.identifier == "APGroupSelectViewController" {
             let controller = segue.destination as! APGroupSelectViewController
             controller.groupName = groupNameTextField.text!
+        } else if segue.identifier == "APGroupChatViewController" {
+            let chatController = segue.destination as! APGroupChatViewController
+            let pageSize = 50
+            var dataSource: DemoChatDataSource!
+            dataSource = DemoChatDataSource(count: 0, pageSize: pageSize)
+            chatController.dataSource = dataSource
+            chatController.messageSender = dataSource.messageSender
+            chatController.chatName = groupNameTextField.text!
         }
     }
     
@@ -57,7 +65,8 @@ class APGroupNameViewController: APBaseViewController, UITextFieldDelegate {
             return
         }
         
-        performSegue(withIdentifier: "APGroupSelectViewController", sender: nil)
+        performSegue(withIdentifier: "APGroupChatViewController", sender: nil)
+        //performSegue(withIdentifier: "APGroupSelectViewController", sender: nil)
     }
 
     // MARK: - UITextFieldDelegate

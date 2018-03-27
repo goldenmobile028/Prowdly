@@ -93,6 +93,15 @@ class DemoChatDataSource: ChatDataSourceProtocol {
         self.slidingWindow.insertItem(message, position: .bottom)
         self.delegate?.chatDataSourceDidUpdate(self)
     }
+    
+    func addGifMessage(_ image: UIImage) {
+        let uid = "\(self.nextMessageId)"
+        self.nextMessageId += 1
+        let message = DemoChatMessageFactory.makePhotoMessage(uid, image: image, size: image.size, isIncoming: false)
+        self.messageSender.sendMessage(message)
+        self.slidingWindow.insertItem(message, position: .bottom)
+        self.delegate?.chatDataSourceDidUpdate(self)
+    }
 
     func addRandomIncomingMessage() {
         let message = DemoChatMessageFactory.makeRandomMessage("\(self.nextMessageId)", isIncoming: true)

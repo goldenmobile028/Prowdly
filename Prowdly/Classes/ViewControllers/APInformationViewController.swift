@@ -11,6 +11,7 @@ import UIKit
 class APInformationViewController: HVBaseViewController, UITableViewDataSource, UITableViewDelegate {
     
     private var titles = ["Email", "Phone Number", "Location", "Birthday", "Occupation", "Friends"]
+    private var contents = ["thisisemail@gmail.com", "+1 416-000-0000", "Toronto, Canada (9:41 AM)", "September 30, 1993", "Full-time student at Goerge College", "11 Friends on Prowdly"]
     private var checkmarks = [true, true, false, false, false, false]
     
     override func viewDidLoad() {
@@ -43,6 +44,7 @@ class APInformationViewController: HVBaseViewController, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "APProfileViewCell", for: indexPath) as! APProfileViewCell
         cell.titleLabel.text = titles[indexPath.row]
+        cell.contentLabel.text = contents[indexPath.row]
         cell.checkImageView.isHidden = !checkmarks[indexPath.row]
         return cell
     }

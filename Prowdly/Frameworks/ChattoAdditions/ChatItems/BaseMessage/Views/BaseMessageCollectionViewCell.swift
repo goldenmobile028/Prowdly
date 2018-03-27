@@ -198,7 +198,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
 
     open override func prepareForReuse() {
         super.prepareForReuse()
-        self.removeAccessoryView()
+        //self.removeAccessoryView() //Conny
     }
 
     public private(set) lazy var failedButton: UIButton = {
@@ -210,7 +210,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
     public private(set) lazy var sentButton: UIButton = {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(BaseMessageCollectionViewCell.sentButtonTapped), for: .touchUpInside)
-        button.setImage(UIImage(named: "check"), for: .normal)
+        button.setImage(UIImage(named: "sentmark"), for: .normal)
         button.isHidden = true
         return button
     }()
@@ -229,6 +229,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         } else {
             self.failedButton.alpha = 0
         }
+        self.failedButton.isHidden = true
         if self.shouldShowSentIcon {
             self.sentButton.setImage(self.baseStyle.sentIcon, for: .normal)
             self.sentButton.setImage(self.baseStyle.sentIconHighlighted, for: .highlighted)
@@ -292,6 +293,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
             self.accessoryTimestampView.center = CGPoint(x: bubbleView.frame.origin.x - leftOffsetForAccessoryView - self.accessoryTimestampView.bounds.size.width / 2.0, y: bubbleView.frame.origin.y + bubbleView.frame.size.height - leftOffsetForAccessoryView - self.accessoryTimestampView.bounds.size.height / 2.0)
             if messageViewModel.isIncoming {
                 self.accessoryTimestampView.center = CGPoint(x: bubbleView.frame.origin.x + bubbleView.frame.size.width + leftOffsetForAccessoryView + self.accessoryTimestampView.bounds.size.width / 2.0, y: bubbleView.frame.origin.y + bubbleView.frame.size.height - leftOffsetForAccessoryView - self.accessoryTimestampView.bounds.size.height / 2.0)
+                sentButton.isHidden = true
             }
         }
     }
@@ -455,8 +457,8 @@ fileprivate struct Layout {
     mutating func calculateLayout(parameters: LayoutParameters) {
         let containerWidth = parameters.containerWidth
         let isIncoming = parameters.isIncoming
-        let isShowingFailedButton = parameters.isShowingFailedButton
-        let isShowingSentButton = parameters.isShowingSentButton
+        let isShowingFailedButton = false//parameters.isShowingFailedButton
+        //let isShowingSentButton = parameters.isShowingSentButton
         let failedButtonSize = parameters.failedButtonSize
         let sentButtonSize = parameters.sentButtonSize
         let bubbleView = parameters.bubbleView
@@ -493,7 +495,7 @@ fileprivate struct Layout {
             xAlignament: .center,
             yAlignment: parameters.avatarVerticalAlignment
         )
-
+        
         self.selectionIndicatorFrame = selectionIndicatorSize.bma_rect(
             inContainer: containerRect,
             xAlignament: .left,
@@ -546,6 +548,19 @@ fileprivate struct Layout {
             self.sentButtonFrame.origin.x = self.bubbleViewFrame.origin.x - self.sentButtonFrame.size.width - horizontalOffset
         }
 
+//        if isIncoming == false {
+//            self.bubbleViewFrame.origin.x += self.avatarViewFrame.size.width// * 2
+//            self.avatarViewFrame.origin.x += self.avatarViewFrame.size.width// * 2
+//            self.sentButtonFrame.origin.x += self.avatarViewFrame.size.width// * 2
+//            self.avatarViewFrame.size.width = 0
+//        }
+        
+        if isIncoming == false {
+            self.bubbleViewFrame.origin.x = containerRect.width - self.bubbleViewFrame.width - parameters.horizontalMargin// * 2
+            self.sentButtonFrame.origin.x = self.bubbleViewFrame.origin.x - self.sentButtonFrame.size.width - horizontalOffset
+            self.avatarViewFrame.size.width = 0
+        }
+        
         self.size = containerRect.size
         self.preferredMaxWidthForBubble = preferredWidthForBubble
     }

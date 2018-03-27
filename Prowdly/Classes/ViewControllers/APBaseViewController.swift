@@ -11,6 +11,7 @@ import UIKit
 class APBaseViewController: UIViewController {
 
     public var isFirstAppear = true
+    public var isPresent = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +37,9 @@ class APBaseViewController: UIViewController {
 
     // MARK: - IBAction
     @IBAction func backButtonPressed(_ sender: Any?) {
-        if let navigationController = self.navigationController {
+        if isPresent == true {
+            self.dismiss(animated: true, completion: nil)
+        } else if let navigationController = self.navigationController {
             navigationController.popViewController(animated: true)
         } else {
             self.dismiss(animated: true, completion: nil)

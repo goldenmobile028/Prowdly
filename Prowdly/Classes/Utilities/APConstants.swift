@@ -19,3 +19,9 @@ let kScreenW = UIScreen.main.bounds.size.width
 let kScreenH = UIScreen.main.bounds.size.height
 
 let kScrollViewBeginTopInset: CGFloat = 200
+
+
+let SERVER_BASE_URL = "http://chat.prowdly.net:3000"
+
+
+let kCURRENT_USER = "CURRENT_USER"

@@ -14,5 +14,7 @@
 #import "SPPageMenu.h"
 #import "MJRefresh.h"
 #import "CircleProgressIndicatorView.h"
+#import "NSDate+NVTimeAgo.h"
+#import "UIImage+animatedGIF.h"
 
 #endif /* Prowdly_Bridging_h */

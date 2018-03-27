@@ -9,14 +9,18 @@
 import UIKit
 import AMScrollingNavbar
 
-class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate {
+class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, APFriendViewCellDelegate {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var friendsTableView: UITableView!
+    @IBOutlet weak var nextLabel: UILabel!
+    
+    @IBOutlet weak var heightNextConstraint: NSLayoutConstraint!
     
     private var friends: [APUser] = []
     private var recents: [APUser] = []
+    private var selectedFriends: [APUser] = []
     
     public var groupName = ""
     
@@ -26,8 +30,9 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
         // Do any additional setup after loading the view.
         titleLabel.text = groupName
         
-        for _ in 0...9 {
+        for i in 0...9 {
             let user = APUser()
+            user.username = "\(i)"
             friends.append(user)
         }
     }
@@ -104,6 +109,8 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if friends.count == 0, recents.count == 0 {
             return 0
+        } else if recents.count == 0 {
+            return friends.count + 1
         } else if friends.count == 0 {
             return recents.count + 1
         } else {
@@ -120,7 +127,14 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
-                //cell.chat = friends[indexPath.row - 1]
+                cell.delegate = self
+                let friend = friends[indexPath.row - 1]
+                cell.user = friend
+                if selectedFriends.contains(friend) {
+                    cell.isSelection = true
+                } else {
+                    cell.isSelection = false
+                }
                 return cell
             }
         } else {
@@ -136,11 +150,25 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
                 return cell
             } else if indexPath.row <= recents.count {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
-                //cell.chat = friends[indexPath.row - 1]
+                cell.delegate = self
+                let friend = friends[indexPath.row - 1]
+                cell.user = friend
+                if selectedFriends.contains(friend) {
+                    cell.isSelection = true
+                } else {
+                    cell.isSelection = false
+                }
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
+                cell.delegate = self
                 //cell.chat = chats[indexPath.row - friends.count - 2]
+                let friend = friends[indexPath.row - 2]
+                if selectedFriends.contains(friend) {
+                    cell.isSelection = true
+                } else {
+                    cell.isSelection = false
+                }
                 return cell
             }
         }
@@ -148,7 +176,7 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
     
     // MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        showUserProfile()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -156,13 +184,33 @@ class APGroupSelectViewController: APBaseViewController, UITextFieldDelegate, UI
             if indexPath.row == 0 {
                 return 44
             } else {
-                return 48
+                return 68
             }
         } else {
             if indexPath.row == 0 || indexPath.row == recents.count + 1 {
                 return 44
             } else {
-                return 48
+                return 68
+            }
+        }
+    }
+    
+    // MARK: - APFriendViewCellDelegate
+    func didSelectFriend(friend: APUser, selection: Bool) {
+        if selection == true {
+            selectedFriends.append(friend)
+        } else {
+            selectedFriends = selectedFriends.filter{ $0 != friend }
+        }
+        if selectedFriends.count == 0 {
+            nextLabel.text = ""
+            heightNextConstraint.constant = 0
+        } else {
+            heightNextConstraint.constant = 64.0
+            if selectedFriends.count == 1 {
+                nextLabel.text = "Chat with Bernice"
+            } else {
+                nextLabel.text = "Chat with Bernice and \(selectedFriends.count - 1) others"
             }
         }
     }

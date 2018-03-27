@@ -9,15 +9,21 @@
 import UIKit
 import AMScrollingNavbar
 
-class APChatsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, APFavoritesViewCellDelegate {
+class APChatsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, APFavoritesViewCellDelegate, APTableViewCellDelegate {
 
     @IBOutlet private var headerView: UIView!
     @IBOutlet private var chatsTableView: UITableView!
     @IBOutlet private var friendsTableView: UITableView!
+    @IBOutlet private var addButton: UIButton!
     @IBOutlet private var chatsButton: UIButton!
     @IBOutlet private var friendsButton: UIButton!
     @IBOutlet private var chatsImageView: UIImageView!
     @IBOutlet private var friendsImageView: UIImageView!
+    
+    let HEADER_HEIGHT: CGFloat = 44
+    let CELL_HEIGHT: CGFloat = 80
+    let FAVORITE_HEIGHT: CGFloat = 60
+    let FRIEND_HEIGHT: CGFloat = 68
     
     var unreadChats: [APChat] = []
     var readChats: [APChat] = []
@@ -45,20 +51,23 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
             readChats.append(chat)
         }
         
-        for _ in 0...9 {
-            let user = APUser()
-            favorites.append(user)
-        }
+//        for _ in 0...9 {
+//            let user = APUser()
+//            favorites.append(user)
+//        }
         
         for _ in 0...9 {
             let user = APUser()
             friends.append(user)
         }
         
-        for _ in 0...9 {
-            let user = APUser()
-            mayKnows.append(user)
-        }
+//        for _ in 0...9 {
+//            let user = APUser()
+//            mayKnows.append(user)
+//        }
+        
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         
         friendsTableView.isHidden = true
 //        if #available(iOS 11, *) {
@@ -85,7 +94,18 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
             var frame = friendsTableView.frame
             frame.origin.x = self.view.frame.size.width
             friendsTableView.frame = frame
+            frame.origin.x = self.view.frame.size.width
+            friendsTableView.frame = frame
+            addButton.isHidden = false
             friendsTableView.isHidden = false
+        }
+        
+        if UserDefaults.standard.string(forKey: "userID") != nil {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            if appDelegate.connect() {
+                //let title = appDelegate.xmppStream.myJID.bare()
+                appDelegate.xmppRoster.fetch()
+            }
         }
     }
     
@@ -98,7 +118,6 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.showNavbar(animated: true, duration: 0.2)
         }
-        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let chatController = storyboard.instantiateViewController(withIdentifier: "APGroupChatViewController") as! APGroupChatViewController
         let initialCount = 2
@@ -107,17 +126,21 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
         let dataSource = DemoChatDataSource(count: initialCount, pageSize: pageSize)
         chatController.dataSource = dataSource
         chatController.messageSender = dataSource.messageSender
-        navigationController?.pushViewController(chatController, animated: true)
+        chatController.isPresent = true
+        let navController = UINavigationController(rootViewController: chatController)
+        navController.isNavigationBarHidden = true
+        self.present(navController, animated: true, completion: nil)
     }
     
     func showUserProfile() {
         if let navigationController = self.navigationController as? ScrollingNavigationController {
             navigationController.showNavbar(animated: true, duration: 0.2)
         }
-        
         let storyboard = UIStoryboard(name: "Profile", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "APProfileViewController") as! APProfileViewController
-        navigationController?.pushViewController(controller, animated: true)
+        controller.isPresent = true
+        let navController = UINavigationController(rootViewController: controller)
+        present(navController, animated: true, completion: nil)
     }
 
     // MARK: - Navigation
@@ -134,6 +157,7 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
             let dataSource = DemoChatDataSource(count: initialCount, pageSize: pageSize)
             chatController.dataSource = dataSource
             chatController.messageSender = dataSource.messageSender
+            chatController.isPresent = true
         }
     }
     
@@ -146,20 +170,31 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBAction func settingsButtonPressed(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Profile", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "APSettingsViewController")
-        navigationController?.pushViewController(controller, animated: true)
+        let controller = storyboard.instantiateViewController(withIdentifier: "APSettingsViewController") as! APSettingsViewController
+        controller.isPresent = true
+        let navController = UINavigationController(rootViewController: controller)
+        present(navController, animated: true, completion: nil)
     }
     
     @IBAction func searchButtonPressed(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "APSearchViewController")
-        navigationController?.pushViewController(controller, animated: true)
+        let controller = storyboard.instantiateViewController(withIdentifier: "APSearchViewController") as! APSearchViewController
+        controller.isPresent = true
+        let navController = UINavigationController(rootViewController: controller)
+        present(navController, animated: true, completion: nil)
     }
     
     @IBAction func addButtonPressed(_ sender: UIButton) {
+        if let navigationController = self.navigationController as? ScrollingNavigationController {
+            navigationController.showNavbar(animated: true, duration: 0.2)
+        }
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "APAddChatsViewController")
-        navigationController?.pushViewController(controller, animated: true)
+        //let controller = storyboard.instantiateViewController(withIdentifier: "APAddChatsViewController") as! APAddChatsViewController
+        let controller = storyboard.instantiateViewController(withIdentifier: "APChooseFriendViewController") as! APChooseFriendViewController
+        controller.isPresent = true
+        let navController = UINavigationController(rootViewController: controller)
+        navController.isNavigationBarHidden = true
+        present(navController, animated: true, completion: nil)
     }
     
     @IBAction func chatsButtonPressed(_ sender: UIButton) {
@@ -189,121 +224,66 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == chatsTableView {
-            if unreadChats.count == 0, readChats.count == 0 {
-                return 0
-            } else if unreadChats.count == 0 {
-                return readChats.count + 1
+            if section == 0 {
+                return unreadChats.count > 0 ? unreadChats.count : readChats.count
             } else {
-                return unreadChats.count + readChats.count + 2
+                return readChats.count
             }
         } else {
-            if favorites.count == 0, friends.count == 0, mayKnows.count == 0 {
-                return 0
-            } else if favorites.count == 0, friends.count == 0 {
-                return mayKnows.count + 1
-            } else if favorites.count == 0 {
-                return friends.count + mayKnows.count + 2
+            if section == 0 {
+                return favorites.count > 0 ? 1 : friends.count > 0 ? friends.count : mayKnows.count
+            } else if section == 1 {
+                return friends.count > 0 ? friends.count : mayKnows.count
             } else {
-                return friends.count + mayKnows.count + 3
+                return mayKnows.count
             }
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == chatsTableView {
-            if unreadChats.count == 0 {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "Chats (\(readChats.count))"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
-                    cell.chat = readChats[indexPath.row - 1]
-                    return cell
-                }
+            if indexPath.section == 0, unreadChats.count > 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
+                cell.chat = unreadChats[indexPath.row]
+                cell.actionDelegate = self
+                return cell
             } else {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "Unread (\(unreadChats.count))"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row == unreadChats.count + 1 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "Chats (\(readChats.count))"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row <= unreadChats.count {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
-                    cell.chat = unreadChats[indexPath.row - 1]
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
-                    cell.chat = readChats[indexPath.row - unreadChats.count - 2]
-                    return cell
-                }
+                let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
+                cell.chat = readChats[indexPath.row]
+                cell.actionDelegate = self
+                return cell
             }
         } else {
-            if favorites.count == 0, friends.count == 0, mayKnows.count == 0 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "APChatViewCell", for: indexPath) as! APChatViewCell
-                return cell // fake
-            } else if favorites.count == 0, friends.count == 0 {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "People You May Know"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APKnowViewCell", for: indexPath) as! APKnowViewCell
-                    //cell.chat = readChats[indexPath.row - 1]
-                    return cell
-                }
-            } else if favorites.count == 0 {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "Friends (\(friends.count))"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row == friends.count + 1 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "People You May Know"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row <= friends.count {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
-                    //cell.chat = friends[indexPath.row - 1]
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APKnowViewCell", for: indexPath) as! APKnowViewCell
-                    //cell.chat = mayKnow[indexPath.row - friends.count - 2]
-                    return cell
-                }
-            } else {
-                if indexPath.row == 0 {
+            if indexPath.section == 0 {
+                if favorites.count > 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "APFavoritesViewCell", for: indexPath) as! APFavoritesViewCell
                     cell.favorites = favorites
                     cell.delegate = self
                     cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
                     return cell
-                } else if indexPath.row == 1 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "Friends (\(friends.count))"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row == friends.count + 2 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "APChatReadCell", for: indexPath) as! APChatReadCell
-                    cell.readLabel.text = "People You May Know"
-                    cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-                    return cell
-                } else if indexPath.row <= friends.count + 1 {
+                } else if friends.count > 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
-                    //cell.chat = friends[indexPath.row - 1]
+                    //cell.chat = friends[indexPath.row]
                     return cell
                 } else {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "APKnowViewCell", for: indexPath) as! APKnowViewCell
-                    //cell.chat = mayKnow[indexPath.row - friends.count - 2]
+                    //cell.chat = mayKnow[indexPath.row]
                     return cell
                 }
+            } else if indexPath.section == 1 {
+                if favorites.count > 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "APFriendViewCell", for: indexPath) as! APFriendViewCell
+                    //cell.chat = friends[indexPath.row]
+                    return cell
+                } else {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "APKnowViewCell", for: indexPath) as! APKnowViewCell
+                    //cell.chat = mayKnow[indexPath.row]
+                    return cell
+                }
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "APKnowViewCell", for: indexPath) as! APKnowViewCell
+                //cell.chat = mayKnow[indexPath.row]
+                return cell
             }
         }
     }
@@ -311,101 +291,118 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == chatsTableView {
-            if unreadChats.count == 0 {
-                if indexPath.row != 0 {
-                    showChatDetails()
-                    //cell.chat = readChats[indexPath.row - 1]
-                }
+            if indexPath.section == 0, unreadChats.count > 0 {
+                showChatDetails()
+                //cell.chat = unreadChats[indexPath.row]
             } else {
-                if indexPath.row == 0 || indexPath.row == unreadChats.count + 1 {
-                    return
-                }
-                if indexPath.row <= unreadChats.count {
-                    showChatDetails()
-                    //cell.chat = unreadChats[indexPath.row - 1]
-                } else {
-                    showChatDetails()
-                    //cell.chat = readChats[indexPath.row - unreadChats.count - 2]
-                }
+                showChatDetails()
+                //cell.chat = readChats[indexPath.row]
             }
         } else {
-            if favorites.count == 0, friends.count == 0, mayKnows.count == 0 {
-                return // fake
-            } else if favorites.count == 0, friends.count == 0 {
-                if indexPath.row != 0 {
+            if indexPath.section == 0 {
+                if favorites.count > 0 {
+                    // Nothing
+                } else if friends.count > 0 {
                     showUserProfile()
-                    //cell.chat = mayKnows[indexPath.row - 1]
-                }
-            } else if favorites.count == 0 {
-                if indexPath.row == 0 || indexPath.row == friends.count + 1 {
-                    return
-                }
-                if indexPath.row <= friends.count {
-                    showChatDetails()
-                    //cell.chat = friends[indexPath.row - 1]
+                    //cell.chat = friends[indexPath.row]
                 } else {
                     showUserProfile()
-                    //cell.chat = mayKnow[indexPath.row - friends.count - 2]
+                    //cell.chat = mayKnow[indexPath.row]
+                }
+            } else if indexPath.section == 1 {
+                if friends.count > 0 {
+                    showUserProfile()
+                    //cell.chat = friends[indexPath.row]
+                } else {
+                    showUserProfile()
+                    //cell.chat = mayKnow[indexPath.row]
                 }
             } else {
-                if indexPath.row == 0 || indexPath.row == 1 || indexPath.row == friends.count + 2 {
-                    return
-                }
-                if indexPath.row <= friends.count + 1 {
-                    showChatDetails()
-                    //cell.chat = friends[indexPath.row - 1]
-                } else {
-                    showUserProfile()
-                    //cell.chat = mayKnow[indexPath.row - friends.count - 2]
-                }
+                showUserProfile()
+                //cell.chat = mayKnow[indexPath.row]
             }
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView == chatsTableView {
-            if unreadChats.count == 0 {
-                if indexPath.row == 0 {
-                    return 44
-                } else {
-                    return 60
-                }
-            } else {
-                if indexPath.row == 0 || indexPath.row == unreadChats.count + 1 {
-                    return 44
-                } else {
-                    return 60
-                }
-            }
+            return CELL_HEIGHT
         } else {
-            if favorites.count == 0, friends.count == 0, mayKnows.count == 0 {
-                return 0
-            } else if favorites.count == 0, friends.count == 0 {
-                if indexPath.row == 0 {
-                    return 44
+            if indexPath.section == 0 {
+                if favorites.count > 0 {
+                    return FAVORITE_HEIGHT
+                } else if friends.count > 0 {
+                    return FRIEND_HEIGHT
                 } else {
-                    return 60
+                    return CELL_HEIGHT
                 }
-            } else if favorites.count == 0 {
-                if indexPath.row == 0 || indexPath.row == friends.count + 1 {
-                    return 44
-                } else if indexPath.row <= friends.count {
-                    return 48
+            } else if indexPath.section == 1 {
+                if favorites.count > 0 {
+                    return FRIEND_HEIGHT
                 } else {
-                    return 60
+                    return CELL_HEIGHT
                 }
             } else {
-                if indexPath.row == 0 {
-                    return 84
-                } else if indexPath.row == 1 || indexPath.row == friends.count + 2 {
-                    return 44
-                } else if indexPath.row <= friends.count + 1 {
-                    return 48
-                } else {
-                    return 60
-                }
+                return CELL_HEIGHT
             }
         }
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if tableView == chatsTableView {
+            var sections = 0
+            sections += unreadChats.count > 0 ? 1 : 0
+            sections += readChats.count > 0 ? 1 : 0
+            return sections
+        } else {
+            var sections = 0
+            sections += favorites.count > 0 ? 1 : 0
+            sections += friends.count > 0 ? 1 : 0
+            sections += mayKnows.count > 0 ? 1 : 0
+            return sections
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if tableView == chatsTableView {
+            return 0
+        } else {
+            return 0//HEADER_HEIGHT
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: HEADER_HEIGHT))
+        view.backgroundColor = .white
+        let label = UILabel(frame: CGRect(x: 20, y: 18, width: 320, height: 24))
+        label.font = FONT_POPPINS_REGULAR!
+        view.addSubview(label)
+        if tableView == chatsTableView {
+            if section == 0 {
+                label.text = unreadChats.count > 0 ? "Unread (\(unreadChats.count))" : "Chats (\(readChats.count))"
+            } else {
+                label.text = "Chats (\(readChats.count))"
+            }
+        } else {
+            if section == 0 {
+                if favorites.count > 0 {
+                    label.text = "Favorites"
+                } else if friends.count > 0 {
+                    label.text = "Friends (\(friends.count))"
+                } else {
+                    label.text = "People You May Know"
+                }
+            } else if section == 1 {
+                if favorites.count > 0 {
+                    label.text = "Friends (\(friends.count))"
+                } else {
+                    label.text = "People You May Know"
+                }
+            } else {
+                label.text = "People You May Know"
+            }
+        }
+        return view
     }
     
     // MARK: - APChatHeaderCellDelegate
@@ -451,6 +448,11 @@ class APChatsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // MARK: - APFavoritesViewCellDelegate
     func didSelectUser(_ userId: String) {
+        showUserProfile()
+    }
+    
+    // MARK: - APTableViewCellDelegate
+    func didPressThumbButton(_ cell: APTableViewCell) {
         showUserProfile()
     }
 }

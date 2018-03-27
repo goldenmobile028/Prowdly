@@ -129,7 +129,7 @@ class APAddChatsViewController: APBaseViewController, UITextFieldDelegate, UITab
         if indexPath.row == 0 {
             return 44
         } else {
-            return 48
+            return 68
         }
     }
     

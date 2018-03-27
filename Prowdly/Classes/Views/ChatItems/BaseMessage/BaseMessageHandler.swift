@@ -52,6 +52,15 @@ class BaseMessageHandler {
 
     func userDidBeginLongPressOnBubble(viewModel: DemoMessageViewModelProtocol) {
         print("userDidBeginLongPressOnBubble")
+//        let imageToShare = [ viewModel.messageModel.type ]
+//        let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
+//        activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
+//
+//        // exclude some activity types from the list (optional)
+//        activityViewController.excludedActivityTypes = [ UIActivityType.airDrop, UIActivityType.postToFacebook ]
+//
+//        // present the view controller
+//        self.present(activityViewController, animated: true, completion: nil)
     }
 
     func userDidEndLongPressOnBubble(viewModel: DemoMessageViewModelProtocol) {

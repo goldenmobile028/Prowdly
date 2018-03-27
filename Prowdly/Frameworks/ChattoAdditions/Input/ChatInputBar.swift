@@ -30,6 +30,7 @@ public protocol ChatInputBarDelegate: class {
     func inputBarDidEndEditing(_ inputBar: ChatInputBar)
     func inputBarDidChangeText(_ inputBar: ChatInputBar)
     func inputBarSendButtonPressed(_ inputBar: ChatInputBar)
+    func inputBarMicButtonPressed(_ inputBar: ChatInputBar)
     func inputBar(_ inputBar: ChatInputBar, shouldFocusOnItem item: ChatInputItemProtocol) -> Bool
     func inputBar(_ inputBar: ChatInputBar, didReceiveFocusOnItem item: ChatInputItemProtocol)
     func inputBarDidShowPlaceholder(_ inputBar: ChatInputBar)
@@ -49,6 +50,7 @@ open class ChatInputBar: ReusableXibView {
     @IBOutlet weak var scrollView: HorizontalStackScrollView!
     @IBOutlet weak var textView: ExpandableTextView!
     @IBOutlet weak var sendButton: UIButton!
+    @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var topBorderHeightConstraint: NSLayoutConstraint!
 
     @IBOutlet var constraintsForHiddenTextView: [NSLayoutConstraint]!
@@ -88,11 +90,11 @@ open class ChatInputBar: ReusableXibView {
             NSLayoutConstraint.activate(self.constraintsForHiddenTextView)
         }
         if self.showsSendButton {
-            NSLayoutConstraint.deactivate(self.constraintsForHiddenSendButton)
-            NSLayoutConstraint.activate(self.constraintsForVisibleSendButton)
+//            NSLayoutConstraint.deactivate(self.constraintsForHiddenSendButton)
+//            NSLayoutConstraint.activate(self.constraintsForVisibleSendButton)
         } else {
-            NSLayoutConstraint.deactivate(self.constraintsForVisibleSendButton)
-            NSLayoutConstraint.activate(self.constraintsForHiddenSendButton)
+//            NSLayoutConstraint.deactivate(self.constraintsForVisibleSendButton)
+//            NSLayoutConstraint.activate(self.constraintsForHiddenSendButton)
         }
         super.updateConstraints()
     }
@@ -110,6 +112,18 @@ open class ChatInputBar: ReusableXibView {
             self.setNeedsUpdateConstraints()
             self.setNeedsLayout()
             self.updateIntrinsicContentSizeAnimated()
+        }
+    }
+    
+    open var showsMicButton: Bool = true {
+        didSet {
+            if showsMicButton == true {
+                micButton.alpha = 1.0
+                sendButton.alpha = 0.0
+            } else {
+                micButton.alpha = 0.0
+                sendButton.alpha = 1.0
+            }
         }
     }
 
@@ -186,6 +200,11 @@ open class ChatInputBar: ReusableXibView {
     @IBAction func buttonTapped(_ sender: AnyObject) {
         self.presenter?.onSendButtonPressed()
         self.delegate?.inputBarSendButtonPressed(self)
+    }
+    
+    @IBAction func micButtonTapped(_ sender: AnyObject) {
+        self.presenter?.onMicButtonPressed()
+        self.delegate?.inputBarMicButtonPressed(self)
     }
 
     public func setTextViewPlaceholderAccessibilityIdentifer(_ accessibilityIdentifer: String) {
@@ -271,6 +290,12 @@ extension ChatInputBar: UITextViewDelegate {
     public func textViewDidChange(_ textView: UITextView) {
         self.updateSendButton()
         self.delegate?.inputBarDidChangeText(self)
+        
+        if textView.text == "" {
+            showsMicButton = true
+        } else {
+            showsMicButton = false
+        }
     }
 
     public func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {

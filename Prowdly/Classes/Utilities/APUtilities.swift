@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Toast_Swift
 
 class APUtilities: NSObject {
     
@@ -22,6 +23,17 @@ class APUtilities: NSObject {
         let nameValidate = NSPredicate(format:"SELF MATCHES %@", nameRegEx)
         let result = nameValidate.evaluate(with: name)
         return result
+    }
+    
+    static func showToastMessage(message: String, fromView: UIView, keyboardHeight: CGFloat) {
+        var style = ToastStyle()
+        style.backgroundColor = COLOR_HIGHLIGHT
+        style.messageColor = .white
+        style.messageFont = FONT_POPPINS_REGULAR!
+        ToastManager.shared.isTapToDismissEnabled = true
+        //self.view.makeToast("Sorry, passwords don’t match", duration: 3.0, position: .top, style: style)
+        ToastManager.shared.style = style
+        fromView.makeToast(message, point: CGPoint(x: fromView.bounds.width / 2.0, y: fromView.bounds.height - keyboardHeight - 32), title: nil, image: nil, completion: nil)
     }
 
     func generateMaskImage(_ size: CGSize) -> UIImage {

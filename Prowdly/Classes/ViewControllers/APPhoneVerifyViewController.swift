@@ -70,7 +70,7 @@ class APPhoneVerifyViewController: APBaseViewController, PinCodeTextFieldDelegat
     }
     
     @IBAction func nextButtonPressed(_ sender: UIButton) {
-        performSegue(withIdentifier: "APAboutViewController", sender: nil)
+        performSegue(withIdentifier: "APSignupViewController", sender: nil)
     }
     
     // MARK: - PinCodeTextFieldDelegate

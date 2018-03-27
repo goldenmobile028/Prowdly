@@ -1,5 +1,5 @@
 //
-//  APAboutViewController.swift
+//  APSignupViewController.swift
 //  Prowdly
 //
 //  Created by Conny Hung on 18/1/2018.
@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Toast_Swift
 
-class APAboutViewController: APBaseViewController, UITextFieldDelegate {
+class APSignupViewController: APBaseViewController, UITextFieldDelegate {
 
     @IBOutlet weak var progrossImageView: UIImageView!
     @IBOutlet weak var nameTextField: UITextField!
@@ -19,6 +20,7 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
     @IBOutlet weak var nextButton: UIButton!
     
     private var progress: CGFloat = 0.4
+    private var keyboardHeight: CGFloat = 216
     
     @IBOutlet private var widthProgressConstraint: NSLayoutConstraint!
     
@@ -26,6 +28,7 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardShown), name:NSNotification.Name.UIKeyboardWillShow, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -42,32 +45,40 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func checkUserAbout() -> CGFloat {
+    @objc func keyboardShown(notification: NSNotification) {
+        let info = notification.userInfo!
+        let keyboardFrame: CGRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        keyboardHeight = keyboardFrame.height
+    }
+    
+    func checkUserAbout(name: String, email: String, password: String, confirm: String) -> CGFloat {
         var checkProgress = progress
-        if nameTextField.text != "" {
+        if name != "" {
             checkProgress += 0.1
         }
         
-        if emailTextField.text != "" {
+        if email != "" {
             checkProgress += 0.1
         }
         
-        if APUtilities.isValidEmail(emailTextField.text!) == true {
+        if APUtilities.isValidEmail(email) == true {
             checkProgress += 0.1
             checkImageView.isHidden = false
         } else {
-            checkImageView.isHidden = true
+            if email == "" {
+                checkImageView.isHidden = true
+            }
         }
         
-        if passwordTextField.text != "" {
+        if password != "" {
             checkProgress += 0.1
         }
         
-        if confirmTextField.text != "" {
+        if confirm != "" {
             checkProgress += 0.1
         }
         
-        if passwordTextField.text != "", passwordTextField.text == confirmTextField.text {
+        if password != "", password == confirm {
             checkProgress += 0.1
         }
         
@@ -82,6 +93,28 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
         }
         
         return checkProgress
+    }
+    
+    func checkEmail(email: String) -> Bool {
+        if email != "" {
+            checkImageView.isHidden = false
+            if APUtilities.isValidEmail(email) == true {
+                checkImageView.image = UIImage(named: "check")
+                return true
+            } else {
+                checkImageView.image = UIImage(named: "invalid")
+                return false
+            }
+        } else {
+            checkImageView.isHidden = true
+            return false
+        }
+    }
+    
+    func checkPasswordMatch(password: String, confirm: String) {
+        if password != "", confirm != "", password != confirm {
+            APUtilities.showToastMessage(message: "Sorry, passwords don’t match", fromView: self.view, keyboardHeight: keyboardHeight)
+        }
     }
 
     /*
@@ -116,6 +149,8 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
             nameTextField.placeholder = "What's your name?"
         } else if textField == emailTextField {
             emailTextField.placeholder = "What's your email address?"
+            checkImageView.isHidden = !checkEmail(email: emailTextField.text!)
+            //checkImageView.isHidden = true
         } else if textField == passwordTextField {
             passwordTextField.placeholder = "Enter your password"
         } else {
@@ -125,14 +160,18 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        _ = checkUserAbout(name: nameTextField.text!, email: emailTextField.text!, password: passwordTextField.text!, confirm: confirmTextField.text!)
         if textField == nameTextField {
             nameTextField.placeholder = "Name"
         } else if textField == emailTextField {
             emailTextField.placeholder = "Email Address"
+            _ = checkEmail(email: emailTextField.text!)
         } else if textField == passwordTextField {
             passwordTextField.placeholder = "Password"
+            checkPasswordMatch(password: passwordTextField.text!, confirm: confirmTextField.text!)
         } else {
             confirmTextField.placeholder = "Confirm Password"
+            checkPasswordMatch(password: passwordTextField.text!, confirm: confirmTextField.text!)
         }
         textField.font = textField.font?.withSize(16)
     }
@@ -140,36 +179,45 @@ class APAboutViewController: APBaseViewController, UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let swiftRange = Range(range, in: textField.text!)
         let text = textField.text?.replacingCharacters(in: swiftRange!, with: string)
-        var checkProgress = checkUserAbout()
+        var checkProgress: CGFloat = 0
+        if textField == nameTextField {
+            checkProgress = checkUserAbout(name: text!, email: emailTextField.text!, password: passwordTextField.text!, confirm: confirmTextField.text!)
+        } else if textField == emailTextField {
+            checkProgress = checkUserAbout(name: nameTextField.text!, email: text!, password: passwordTextField.text!, confirm: confirmTextField.text!)
+            checkImageView.isHidden = !checkEmail(email: text!)
+            //checkImageView.isHidden = true
+        } else if textField == passwordTextField {
+            checkProgress = checkUserAbout(name: nameTextField.text!, email: emailTextField.text!, password: text!, confirm: confirmTextField.text!)
+        } else {
+            checkProgress = checkUserAbout(name: nameTextField.text!, email: emailTextField.text!, password: passwordTextField.text!, confirm: text!)
+        }
         if text == "" {
             checkProgress -= 0.1
         } else if textField.text == "" {
-            checkProgress += 0.1
             UIView.animate(withDuration: 0.3, animations: {
                 self.widthProgressConstraint.constant = self.view.frame.size.width * checkProgress
                 self.view.layoutIfNeeded()
             })
             if fabs(1.0 - checkProgress) <= 0.001 {
                 nextButton.isHidden = false
+                checkImageView.isHidden = false
             } else {
                 nextButton.isHidden = true
+                //checkImageView.isHidden = true
             }
         }
         return true
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        _ = checkUserAbout(name: nameTextField.text!, email: emailTextField.text!, password: passwordTextField.text!, confirm: confirmTextField.text!)
         if textField == nameTextField {
-            _ = checkUserAbout()
             emailTextField.becomeFirstResponder()
         } else if textField == emailTextField {
-            _ = checkUserAbout()
             passwordTextField.becomeFirstResponder()
         } else if textField == passwordTextField {
-            _ = checkUserAbout()
             confirmTextField.becomeFirstResponder()
         } else {
-            _ = checkUserAbout()
             textField.resignFirstResponder()
         }
         return true

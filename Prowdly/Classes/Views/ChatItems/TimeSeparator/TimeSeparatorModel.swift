@@ -24,7 +24,6 @@
 
 import Foundation
 import UIKit
-import NSDate_Time_Ago
 
 class TimeSeparatorModel: ChatItemProtocol {
     let uid: String

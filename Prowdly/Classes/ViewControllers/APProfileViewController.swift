@@ -197,7 +197,15 @@ class APProfileViewController: APBaseViewController, UIScrollViewDelegate, SPPag
     }
     
     @IBAction func chatButtonPressed(_ sender: UIButton?) {
-        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let chatController = storyboard.instantiateViewController(withIdentifier: "APGroupChatViewController") as! APGroupChatViewController
+        let pageSize = 50
+        var dataSource: DemoChatDataSource!
+        dataSource = DemoChatDataSource(count: 0, pageSize: pageSize)
+        chatController.dataSource = dataSource
+        chatController.messageSender = dataSource.messageSender
+        chatController.chatName = "Hailee Steinfeld"
+        navigationController?.pushViewController(chatController, animated: true)
     }
     
     // MARK: - UIScrollViewDelegate

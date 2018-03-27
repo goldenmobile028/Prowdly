@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Type</key>
+	<string>gif</string>
+	<key>Name</key>
+	<string>Basic</string>
+	<key>FeatureID</key>
+	<string>com.wocketship.prowdly.GifBasicPack</string>
+	<key>FeatureProID</key>
+	<string>com.wocketship.prowdly.GifBasicPack</string>
+	<key>Lock</key>
+	<string>none</string>
+	<key>Order</key>
+	<integer>0</integer>
+	<key>Image</key>
+	<string>thumb_gif_basic</string>
+	<key>Elements</key>
+	<array>
+		<string>gif_basic_01</string>
+		<string>gif_basic_02</string>
+		<string>gif_basic_03</string>
+		<string>gif_basic_04</string>
+		<string>gif_basic_05</string>
+		<string>gif_basic_06</string>
+		<string>gif_basic_07</string>
+		<string>gif_basic_08</string>
+		<string>gif_basic_09</string>
+		<string>gif_basic_10</string>
+	</array>
+</dict>
+</plist>

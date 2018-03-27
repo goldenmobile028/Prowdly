@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import NSDate_Time_Ago
 
 class APChatViewCell: APTableViewCell {
 

@@ -23,6 +23,7 @@
 */
 
 import UIKit
+import SwiftyGif
 
 public protocol PhotoBubbleViewStyleProtocol {
     func maskingImage(viewModel: PhotoMessageViewModelProtocol) -> UIImage
@@ -158,7 +159,12 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.placeholderIconView.tintColor = self.photoMessageStyle.placeholderIconTintColor(viewModel: self.photoMessageViewModel)
 
         if let image = self.photoMessageViewModel.image.value {
-            self.imageView.image = image
+//            let images1 = image.images
+//            if let images = image.images, images.count > 1 {
+//                self.imageView.setGifImage(image)
+//            } else {
+                self.imageView.image = image
+//            }
             self.placeholderIconView.isHidden = true
         } else {
             self.imageView.image = self.photoMessageStyle.placeholderBackgroundImage(viewModel: self.photoMessageViewModel)

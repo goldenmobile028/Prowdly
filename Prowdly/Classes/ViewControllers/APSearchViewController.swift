@@ -141,15 +141,15 @@ class APSearchViewController: APBaseViewController, UITextFieldDelegate, UITable
             if indexPath.row == 0 {
                 return 44
             } else {
-                return 60
+                return 80
             }
         } else {
             if indexPath.row == 0 || indexPath.row == friends.count + 1 {
                 return 44
             } else if indexPath.row <= friends.count {
-                return 48
+                return 68
             } else {
-                return 60
+                return 80
             }
         }
     }
